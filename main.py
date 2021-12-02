@@ -1,12 +1,14 @@
+import base64
 import os
 import json
-import time
+import urllib.parse
 
 from typing import List
 
 from urllib import request
-from fastapi import FastAPI, Request
+from fastapi import FastAPI
 from pydantic import BaseModel
+
 
 slack_webhook_url = os.getenv("SLACK_WEBHOOK_URL")
 if not slack_webhook_url:
@@ -14,30 +16,75 @@ if not slack_webhook_url:
 
 api = FastAPI()
 
-delay_seconds: float = 1.0
-last_request_time: float = 0.0
 
-
-class SaleorCustomerUpdatedPayload(BaseModel):
+class SaleorChannel(BaseModel):
     id: str
-    email: str
+    slug: str
+    currency_code: str
+
+
+class SaleorAddress(BaseModel):
+    id: str
     first_name: str
     last_name: str
+    company_name: str
+    street_address_1: str
+    street_address_2: str
+    city: str
+    city_area: str
+    postal_code: str
+    country: str
+    country_area: str
+    phone: str
+
+    def __str__(self) -> str:
+        bits = [
+            self.company_name,
+            self.street_address_1,
+            self.street_address_2,
+            self.city,
+            self.city_area,
+            self.postal_code,
+            self.country,
+        ]
+        address = ", ".join([bit for bit in bits if len(bit) > 0])
+        return f"{self.first_name} {self.last_name}, {address}"
 
 
-@api.post("/customer_updated")
-def customer_updated(customers: List[SaleorCustomerUpdatedPayload]):
-    global last_request_time
+class SaleorOrder(BaseModel):
+    id: str
+    channel: SaleorChannel
+    shipping_address: SaleorAddress
+    billing_address: SaleorAddress
+    user_email: str
 
-    t = time.time()
-    if t - last_request_time < delay_seconds:
-        # We already handled a call recently, ignore this one. Temporary hack to
-        # prevent multiple invocations due to Saleor sending multiple callbacks
-        # for the same event.
-        return
-    last_request_time = t
-    for customer in customers:
-        message = f"Message from the Saleor Slack App: customer {customer.first_name} {customer.last_name} ({customer.email}) was updated"
+    @property
+    def url(self) -> str:
+        return f"http://localhost:9000/orders/{urllib.parse.quote(self.id)}"
+
+    @property
+    def id_number(self) -> int:
+        return int(base64.b64decode(self.id).decode("utf-8").split(":")[1])
+
+
+@api.post("/order_confirmed")
+def order_confirmed(orders: List[SaleorOrder]):
+    for order in orders:
+        message = f"🛒 <{order.url}|Order #{order.id_number}> for customer {order.user_email} has been confirmed. Please check payment has been received before shipping."
+        post_to_slack(slack_webhook_url, message)
+
+
+@api.post("/order_fully_paid")
+def order_fully_paid(orders: List[SaleorOrder]):
+    for order in orders:
+        message = f"💷 <{order.url}|Order #{order.id_number}> for customer {order.user_email} has been fully paid. Please ship to {order.shipping_address}"
+        post_to_slack(slack_webhook_url, message)
+
+
+@api.post("/order_fulfilled")
+def order_fulfilled(orders: List[SaleorOrder]):
+    for order in orders:
+        message = f"📦 <{order.url}|Order #{order.id_number}> for customer {order.user_email} has been fulfilled."
         post_to_slack(slack_webhook_url, message)
 
 

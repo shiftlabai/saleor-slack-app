@@ -1,0 +1,97 @@
+[
+  {
+    "type": "Order",
+    "id": "T3JkZXI6MjM=",
+    "channel": {
+      "type": "Channel",
+      "id": "Q2hhbm5lbDox",
+      "slug": "default-channel",
+      "currency_code": "USD"
+    },
+    "shipping_method": {
+      "type": "weight",
+      "id": "U2hpcHBpbmdNZXRob2Q6MTU=",
+      "name": "EMS"
+    },
+    "payments": null,
+    "shipping_address": {
+      "type": "Address",
+      "id": "QWRkcmVzczo2NQ==",
+      "first_name": "Brandon",
+      "last_name": "Ruiz",
+      "company_name": "",
+      "street_address_1": "09925 Isabel Run",
+      "street_address_2": "",
+      "city": "JAMESFORT",
+      "city_area": "",
+      "postal_code": "72850",
+      "country": "US",
+      "country_area": "AR",
+      "phone": ""
+    },
+    "billing_address": {
+      "type": "Address",
+      "id": "QWRkcmVzczo2Nw==",
+      "first_name": "Brandon",
+      "last_name": "Ruiz",
+      "company_name": "",
+      "street_address_1": "09925 Isabel Run",
+      "street_address_2": "",
+      "city": "JAMESFORT",
+      "city_area": "",
+      "postal_code": "72850",
+      "country": "US",
+      "country_area": "AR",
+      "phone": ""
+    },
+    "discounts": null,
+    "original": "T3JkZXI6Tm9uZQ==",
+    "lines": [
+      {
+        "type": "OrderLine",
+        "id": "T3JkZXJMaW5lOjQ4",
+        "total_price_net_amount": "7.00",
+        "total_price_gross_amount": "7.00",
+        "allocations": [
+          {
+            "quantity_allocated": 1,
+            "warehouse_id": "V2FyZWhvdXNlOjQ0NjE2Y2FlLWZjY2QtNGNhMy1iOTlkLWYxZDg1YjRkYzE3Mw=="
+          }
+        ],
+        "product_name": "Banana Juice",
+        "variant_name": "2l",
+        "translated_product_name": "",
+        "translated_variant_name": "",
+        "product_sku": "40636347",
+        "quantity": 1,
+        "currency": "USD",
+        "unit_discount_amount": "0.00",
+        "unit_discount_type": "fixed",
+        "unit_discount_reason": null,
+        "unit_price_net_amount": "7.00",
+        "unit_price_gross_amount": "7.00",
+        "undiscounted_unit_price_gross_amount": "7.00",
+        "undiscounted_unit_price_net_amount": "7.00",
+        "undiscounted_total_price_gross_amount": "7.00",
+        "undiscounted_total_price_net_amount": "7.00",
+        "tax_rate": "0.0000"
+      }
+    ],
+    "fulfillments": [],
+    "private_metadata": {},
+    "metadata": {},
+    "created": "2021-12-02T12:21:25.579Z",
+    "status": "unfulfilled",
+    "user_email": "brandon.ruiz@example.com",
+    "origin": "draft",
+    "shipping_method_name": "EMS",
+    "shipping_price_net_amount": "31.93",
+    "shipping_price_gross_amount": "31.93",
+    "shipping_tax_rate": "0.0000",
+    "total_net_amount": "38.93",
+    "undiscounted_total_net_amount": "38.93",
+    "total_gross_amount": "38.93",
+    "undiscounted_total_gross_amount": "38.93",
+    "weight": "2000.0:g"
+  }
+]
