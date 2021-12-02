@@ -1,6 +1,8 @@
 import os
 import json
-from typing import Any, List, Optional
+import time
+
+from typing import List
 
 from urllib import request
 from fastapi import FastAPI, Request
@@ -12,6 +14,9 @@ if not slack_webhook_url:
 
 api = FastAPI()
 
+delay_seconds: float = 1.0
+last_request_time: float = 0.0
+
 
 class SaleorCustomerUpdatedPayload(BaseModel):
     id: str
@@ -22,10 +27,18 @@ class SaleorCustomerUpdatedPayload(BaseModel):
 
 @api.post("/customer_updated")
 def customer_updated(customers: List[SaleorCustomerUpdatedPayload]):
+    global last_request_time
+
+    t = time.time()
+    if t - last_request_time < delay_seconds:
+        # We already handled a call recently, ignore this one. Temporary hack to
+        # prevent multiple invocations due to Saleor sending multiple callbacks
+        # for the same event.
+        return
+    last_request_time = t
     for customer in customers:
         message = f"Message from the Saleor Slack App: customer {customer.first_name} {customer.last_name} ({customer.email}) was updated"
         post_to_slack(slack_webhook_url, message)
-    pass
 
 
 def post_to_slack(webhook_url: str, message: str):
